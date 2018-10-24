@@ -1,0 +1,188 @@
+select {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -webkit-padding-end: 20px;
+    -moz-padding-end: 20px;
+    -webkit-padding-start: 2px;
+    -moz-padding-start: 2px;
+    background-color:#57A5F3; /* fallback color if gradients are not supported */
+    background-image: url(../images/select-arrow.png), -webkit-linear-gradient(top, #E5E5E5, #F4F4F4); /* For Chrome and Safari */
+    background-image: url(../images/select-arrow.png), -moz-linear-gradient(top, #E5E5E5, #F4F4F4); /* For old Fx (3.6 to 15) */
+    background-image: url(../images/select-arrow.png), -ms-linear-gradient(top, #E5E5E5, #F4F4F4); /* For pre-releases of IE 10*/
+    background-image: url(../images/select-arrow.png), -o-linear-gradient(top, #E5E5E5, #F4F4F4); /* For old Opera (11.1 to 12.0) */ 
+    background-image: url(../images/select-arrow.png), linear-gradient(to bottom, #E5E5E5, #F4F4F4); /* Standard syntax; must be last */
+    background-position: center right;
+    background-repeat: no-repeat;
+    border: 1px solid #AAA;
+    border-radius: 2px;
+    box-shadow: 0px 6px 4px rgba(0, 0, 0, 0.1);
+    color: #555;
+    font-size: inherit;
+    margin: 0;
+    overflow: hidden;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+fieldset {
+    margin-top: 50px;
+}
+
+.container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    margin-top: 50px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container .checkmark:after {
+ 	top: 9px;
+	left: 9px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+}
+
+input[type=range] {
+    height: 60px;
+    -webkit-appearance: none;
+    margin: 10px 0;
+    width: 100%;
+  }
+  input[type=range]:focus {
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 3px 3px 5px #A6A6A6;
+    background: #57A5F3;
+    border-radius: 50px;
+    border: 2px solid #6174F2;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    box-shadow: 3px 3px 5px #A6A6A6;
+    border: 1px solid #3F57F2;
+    height: 50px;
+    width: 33px;
+    border-radius: 48px;
+    background: #2196F3;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -21.5px;
+  }
+  input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #57A5F3;
+  }
+  input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    animate: 0.2s;
+    box-shadow: 3px 3px 5px #A6A6A6;
+    background: #57A5F3;
+    border-radius: 50px;
+    border: 2px solid #6174F2;
+  }
+  input[type=range]::-moz-range-thumb {
+    box-shadow: 3px 3px 5px #A6A6A6;
+    border: 1px solid #3F57F2;
+    height: 50px;
+    width: 33px;
+    border-radius: 48px;
+    background: #2196F3;
+    cursor: pointer;
+  }
+  input[type=range]::-ms-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+  }
+  input[type=range]::-ms-fill-lower {
+    background: #57A5F3;
+    border: 2px solid #6174F2;
+    border-radius: 100px;
+    box-shadow: 3px 3px 5px #A6A6A6;
+  }
+  input[type=range]::-ms-fill-upper {
+    background: #57A5F3;
+    border: 2px solid #6174F2;
+    border-radius: 100px;
+    box-shadow: 3px 3px 5px #A6A6A6;
+  }
+  input[type=range]::-ms-thumb {
+    margin-top: 1px;
+    box-shadow: 3px 3px 5px #A6A6A6;
+    border: 1px solid #3F57F2;
+    height: 50px;
+    width: 33px;
+    border-radius: 48px;
+    background: #2196F3;
+    cursor: pointer;
+  }
+  input[type=range]:focus::-ms-fill-lower {
+    background: #57A5F3;
+  }
+  input[type=range]:focus::-ms-fill-upper {
+    background: #57A5F3;
+  }
