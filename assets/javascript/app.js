@@ -4,6 +4,11 @@ const $categorySelect =  $("#category-select");
 const $slideText = $("#slide-value");
 const $questionRange = $("#question-range");
 
+let currentQuestion = 0;
+let correctAnswers = 0;
+let wrongAnswers = 0;
+let unanswered = 0;
+
 grabInformationForScreenRender();
 $questionRange.hide();
 $slideText.hide();
@@ -50,14 +55,20 @@ function renderScreen2(response)
         if(response.category_question_count.total_easy_question_count > 50)
         {
             $questionRange.attr("max", 50);
-            $slideText.text("1");
-            $questionRange.val("1");
+            $slideText.text("5");
+            $questionRange.val("5");
+            $questionRange.off().on("input", function(){
+                $slideText.text(this.value);
+            })
         }
         else
         {
             $questionRange.attr("max", response.category_question_count.total_easy_question_count);
-            $slideText.text("1");
-            $questionRange.val("1");
+            $slideText.text("5");
+            $questionRange.val("5");
+            $questionRange.off().on("input", function(){
+                $slideText.text(this.value);
+            })
         }
     }
     else if(difficulty === "medium")
@@ -65,14 +76,20 @@ function renderScreen2(response)
         if(response.category_question_count.total_medium_question_count > 50)
         {
             $questionRange.attr("max", 50);
-            $slideText.text("1");
-            $questionRange.val("1");
+            $slideText.text("5");
+            $questionRange.val("5");
+            $questionRange.off().on("input", function(){
+                $slideText.text(this.value);
+            })
         }
         else
         {
             $questionRange.attr("max", response.category_question_count.total_medium_question_count);
-            $slideText.text("1");
-            $questionRange.val("1");
+            $slideText.text("5");
+            $questionRange.val("5");
+            $questionRange.off().on("input", function(){
+                $slideText.text(this.value);
+            })
         }
     }
     else if(difficulty === "hard")
@@ -80,15 +97,20 @@ function renderScreen2(response)
         if(response.category_question_count.total_hard_question_count > 50)
         {
             $questionRange.attr("max", 50);
-            $slideText.text("1");
-            $questionRange.val("1");
+            $slideText.text("5");
+            $questionRange.val("5");
+            $questionRange.off().on("input", function(){
+                $slideText.text(this.value);
+            })
         }
         else
         {
-            console.log(response.category_question_count.total_hard_question_count);
             $questionRange.attr("max", response.category_question_count.total_hard_question_count);
-            $slideText.text("1");
-            $questionRange.val("1");
+            $slideText.text("5");
+            $questionRange.val("5");
+            $questionRange.off().on("input", function(){
+                $slideText.text(this.value);
+            })
         }
     }
     
@@ -103,14 +125,7 @@ function renderScreen2(response)
     })
 }
 
-function startTrivia(response)
-{
-    if(response.response_code === 1)
-    {
-        console.log("Not enough questions! Please select less or a different category");
-    }
-    console.log(response);
-}
+
 
 function createURL(amount, category, difficulty)
 {
@@ -135,4 +150,118 @@ function grabInformationForScreenRender()
         url: categoryList,
         method: "GET",
     }).done(renderScreen); 
+}
+
+
+
+function makeButtons(answer, value)
+{
+    $answerButton = $("<button>").text(answer).val(value);
+    
+    return $answerButton;
+}
+
+function displayNextQuestion()
+{
+    $(".main-container").empty();
+    
+    $(".main-container").append($("<h1>").html(questionObject[currentQuestion].question))
+    for(let i = 0; i < questionObject[currentQuestion].answers.length; i++)
+    {
+        $(".main-container").append(questionObject[currentQuestion].answers[i]);
+    }
+
+    currentQuestion++;
+
+    $(".main-container").append($("<h1>").text("Correct Answers :" + correctAnswers));
+    $(".main-container").append($("<h1>").text("Wrong Answers : " + wrongAnswers));
+
+    $("button").on("click", function()
+    {
+        if(this.value === "true")
+        {
+            correctAnswers++;
+        }
+        else
+        {
+            wrongAnswers++;
+        }
+
+
+        displayNextQuestion();
+
+        console.log(this.value);
+
+    })
+}
+
+
+function startTrivia(response)
+{
+    //empty the container
+    
+
+    questions = response.results;
+    
+    questionObject = {};
+    for(let i = 0; i < questions.length; i++)
+    {
+        questionObject[i] = {};
+        questionObject[i].answers = [];
+
+        if(questions[i].type === "multiple")
+        {
+
+            correctPosition = Math.floor(Math.random() * (questions[i].incorrect_answers.length + 1));
+
+            questionObject[i].question = questions[i].question;
+            for(let j = 0; j < questions[i].incorrect_answers.length; j++)
+            {
+                if(j === correctPosition)
+                {
+                    questionObject[i].answers.push(makeButtons(questions[i].correct_answer, true));
+                }
+                
+                questionObject[i].answers.push(makeButtons(questions[i].incorrect_answers[j], false));
+
+                if(j === questions[i].incorrect_answers.length - 1 && correctPosition === questions[i].incorrect_answers.length)
+                {
+                    questionObject[i].answers.push(makeButtons(questions[i].correct_answer, true));
+                }
+            }
+        }
+        else if(questions[i].type === "boolean")
+        {
+            questionObject[i].question = questions[i].question;
+
+            if(questions[i].correct_answer === "True")
+            {
+                questionObject[i].answers.push(makeButtons("True", true));
+                questionObject[i].answers.push(makeButtons("False", false));
+            }
+            else
+            {
+                questionObject[i].answers.push(makeButtons("True", false));
+                questionObject[i].answers.push(makeButtons("False", true));
+            }
+        }
+    }
+
+    displayNextQuestion();
+
+
+
+    //---next make buttons with answers
+    //---then push them to a page
+    //---make onclick events for said buttons
+    //Set timer
+    //display question
+    //countdown timer until button is pressed
+    //stop timer
+    //dispaly right/wrong page
+    //increment correct/inccorect/unanswered counters
+    //reset timer
+    //start over
+
+
 }

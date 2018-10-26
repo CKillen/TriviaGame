@@ -1,3 +1,64 @@
+body, html {
+    height: 100vh;
+    width: 100vw;
+    background-image: url("/assets/images/snow.png");
+    overflow: hidden;
+}
+
+h1 {
+    font-size: 42px;
+
+}
+
+#category-select {
+    margin-top: 2em;
+}
+
+#start-game-button {
+    margin: 2em auto;
+    width: 20%;
+    height: 50px;
+    border-radius: 15px;
+    font-size: 24px;
+}
+
+.main-container {
+    margin: 2em auto;
+    width: 80%;
+    text-align: center;
+    height: auto;
+}
+
+.radio-container {
+    margin: 2em auto;
+    width: 20%;
+}
+
+#slide-value {
+    text-align: center;
+}
+
+.slidecontainer {
+    width: 35%;
+    margin: 0 auto;
+}
+
+
+
+
+
+
+
+
+
+
+/*------------------------------------------------------------------------------
+This section is style found through internet tools and helpful post
+------------------------------------------------------------------------------*/
+
+
+
+
 select {
     -webkit-appearance: button;
     -moz-appearance: button;

@@ -5,37 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link rel="stylesheet" href="assets/css/reset.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
-<h1>trivia</h1>
-<select name="" id="category-select">
-    
-</select>
+<div class="main-container">
 
+    <h1>Welcome to Trivia!</h1>
+    <select name="" id="category-select">
+        <option>Please Select a Category</option>
+    </select>
+        
+    <div class="radio-container">
+        <label class="container">Easy
+            <input type="radio" value="easy" checked="checked" name="difficulty">
+            <span class="checkmark"></span>
+        </label>
+        <label class="container">Medium
+            <input type="radio" value="medium" name="difficulty">
+            <span class="checkmark"></span>
+        </label>
+        <label class="container">Hard
+            <input type="radio" value="hard" name="difficulty">
+            <span class="checkmark"></span>
+        </label>
+    </div>
 
-<label class="container">Easy
-        <input type="radio" value="easy" checked="checked" name="difficulty">
-        <span class="checkmark"></span>
-      </label>
-      <label class="container">Medium
-        <input type="radio" value="medium" name="difficulty">
-        <span class="checkmark"></span>
-      </label>
-      <label class="container">Hard
-        <input type="radio" value="hard" name="difficulty">
-        <span class="checkmark"></span>
-      </label>
-
-
-
-<div class="slidecontainer">
+        
+        
+        
+    <div class="slidecontainer">
         <input type="range" min="5" max="50" value="10" class="slider" id="question-range">
         <p id="slide-value"></p>
     </div>
 
-<button id="start-game-button">Start!</button>
+    <button id="start-game-button">Start!</button>
+
+</div>
+
+
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="assets/javascript/app.js"></script>
 </body>
