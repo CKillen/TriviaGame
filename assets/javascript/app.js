@@ -9,6 +9,8 @@ let correctAnswers = 0;
 let wrongAnswers = 0;
 let unanswered = 0;
 
+let testI;
+
 grabInformationForScreenRender();
 $questionRange.hide();
 $slideText.hide();
@@ -156,39 +158,85 @@ function grabInformationForScreenRender()
 
 function makeButtons(answer, value)
 {
-    $answerButton = $("<button>").text(answer).val(value);
+    $answerButton = $("<button>").text(answer).val(value).addClass("answer-button");
     
     return $answerButton;
 }
 
-function displayNextQuestion()
+function displayNextAnsweredPage(correct, questionObject)
 {
+    $(".main-container").empty();
+    if(correct === true)
+    {
+        clearInterval(testI);
+        $(".main-container").append($("<h1>").text("Good job! You are correct!"));
+        //dispaly correct answer
+        //display score
+        //button for next question
+    }
+    else
+    {
+        clearInterval(testI);
+        $(".main-container").append($("<h1>").text("Better Luck next time!"));        
+        //dispaly correct answer
+        //display score
+        //button for next question
+    }
+    $(".main-container").append($("<h1>").text("Correct Answer: " + questionObject[currentQuestion].correct));
+
+    $(".main-container").append($("<h1>").text("Correct Answers :" + correctAnswers));
+    $(".main-container").append($("<h1>").text("Wrong Answers : " + wrongAnswers));
+    $(".main-container").append($("<h1>").text("Unanswered Answers : " + unanswered));
+    
+    $(".main-container").append($("<button>").text("Next question").on("click", function(){
+        currentQuestion++;
+        displayNextQuestion(questionObject);
+    }))
+
+}
+
+function displayNextQuestion(questionObject)
+{
+    count = 5;
+    if(testI)
+    {
+        //reclear 
+        clearInterval(testI);
+    }
+    testI = setInterval(test, 1000, questionObject);
+
     $(".main-container").empty();
     
     $(".main-container").append($("<h1>").html(questionObject[currentQuestion].question))
+    $(".main-container").append($("<h1>").addClass("timer").text("5"));
+
     for(let i = 0; i < questionObject[currentQuestion].answers.length; i++)
     {
         $(".main-container").append(questionObject[currentQuestion].answers[i]);
     }
 
-    currentQuestion++;
+
 
     $(".main-container").append($("<h1>").text("Correct Answers :" + correctAnswers));
     $(".main-container").append($("<h1>").text("Wrong Answers : " + wrongAnswers));
+    $(".main-container").append($("<h1>").text("Unanswered Answers : " + unanswered));
+
 
     $("button").on("click", function()
     {
         if(this.value === "true")
         {
             correctAnswers++;
+            displayNextAnsweredPage(true, questionObject);
         }
         else
         {
             wrongAnswers++;
+            displayNextAnsweredPage(false, questionObject);
         }
 
 
-        displayNextQuestion();
+        
 
         console.log(this.value);
 
@@ -198,16 +246,51 @@ function displayNextQuestion()
 
 function startTrivia(response)
 {
-    //empty the container
-    
 
     questions = response.results;
     
-    questionObject = {};
+    questionObject = createQuestionObject(response.results);
+
+    displayNextQuestion(questionObject);
+
+
+
+    //---next make buttons with answers
+    //---then push them to a page
+    //---make onclick events for said buttons
+    //--Set timer
+    //--display question
+    //--countdown timer until button is pressed
+    //--stop timer
+    //////////////////dispaly right/wrong page
+    //--increment correct/inccorect/unanswered counters
+    //--reset timer
+    /////////////////start over
+
+
+}
+
+function test(questionObject)
+{
+    count--;
+    $(".timer").text(count);
+    if(count === 0)
+    {
+        unanswered++;
+        displayNextAnsweredPage(false, questionObject);
+    }
+    console.log(count);
+}
+
+function createQuestionObject(questions)
+{
+    let questionObject = {};
+    
     for(let i = 0; i < questions.length; i++)
     {
         questionObject[i] = {};
         questionObject[i].answers = [];
+        questionObject[i].correct = questions[i].correct_answer;
 
         if(questions[i].type === "multiple")
         {
@@ -233,6 +316,7 @@ function startTrivia(response)
         else if(questions[i].type === "boolean")
         {
             questionObject[i].question = questions[i].question;
+            questionObject[i].correct = questions[i].correct_answer;
 
             if(questions[i].correct_answer === "True")
             {
@@ -247,21 +331,5 @@ function startTrivia(response)
         }
     }
 
-    displayNextQuestion();
-
-
-
-    //---next make buttons with answers
-    //---then push them to a page
-    //---make onclick events for said buttons
-    //Set timer
-    //display question
-    //countdown timer until button is pressed
-    //stop timer
-    //dispaly right/wrong page
-    //increment correct/inccorect/unanswered counters
-    //reset timer
-    //start over
-
-
+    return questionObject;
 }
