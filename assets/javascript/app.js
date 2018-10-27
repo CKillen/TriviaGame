@@ -1,26 +1,59 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//      Variables
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//API
 const categoryList = "https://opentdb.com/api_category.php";
 const questionAmount = "https://opentdb.com/api_count.php?category=${categoryId}";
-const $categorySelect =  $("#category-select");
-const $slideText = $("#slide-value");
-const $questionRange = $("#question-range");
 
+//Jquery - these are lets because they change on reset
+let $categorySelect;
+let $slideText;
+let $questionRange;
+//const because it never changes
+const $mainContainer = $(".main-container");
+
+//HTML
+const startPageHtml = $mainContainer.html();
+
+//Scores
 let currentQuestion = 0;
 let correctAnswers = 0;
 let wrongAnswers = 0;
 let unanswered = 0;
 
-let testI;
+//Interval
+let intervalId;
 
-grabInformationForScreenRender();
-$questionRange.hide();
-$slideText.hide();
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//      Start Game
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-$questionRange.on("input", function(){
-    $slideText.text(this.value);
-})
+startScreen();
 
-function renderScreen(response)
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Style Right/Wrong and End
+//  REFACTOR!!!!!
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//      Functions
+//
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function renderCategories(response)
 {
+    //populate the categories select
     response.trivia_categories.forEach(element =>{
 
         let $option = $("<option>").text(element.name).val(element.id);
@@ -28,28 +61,34 @@ function renderScreen(response)
 
     })
 
-    $categorySelect.on("change" , function() {
-
-        let questionURL = questionAmount.replace("${categoryId}", this.value);
-
-        $.ajax({
-            url: questionURL,
-            method: "GET",
-        }).done(renderScreen2); 
-    })
-
-    $('input[type=radio][name=difficulty]').on("change", function() {
-        let questionURL = questionAmount.replace("${categoryId}", $categorySelect.val());
-
-        $.ajax({
-            url: questionURL,
-            method: "GET",
-        }).done(renderScreen2);        
-    })
+    addSliderListeners();
 
 }
 
-function renderScreen2(response)
+function addSliderListeners()
+{
+        //Render slider on category changes
+        $categorySelect.on("change" , function() {
+            let questionURL = questionAmount.replace("${categoryId}", this.value);
+    
+            $.ajax({
+                url: questionURL,
+                method: "GET",
+            }).done(renderSlider); 
+        });
+    
+        //Render slider when difficulty changes
+        $('input[type=radio][name=difficulty]').on("change", function() {
+            let questionURL = questionAmount.replace("${categoryId}", $categorySelect.val());
+    
+            $.ajax({
+                url: questionURL,
+                method: "GET",
+            }).done(renderSlider);        
+        });
+}
+
+function renderSlider(response)
 {
     let difficulty = $('input[type=radio][name=difficulty]:checked').val();
     if(difficulty === "easy")
@@ -151,10 +190,9 @@ function grabInformationForScreenRender()
     $.ajax({
         url: categoryList,
         method: "GET",
-    }).done(renderScreen); 
+    }).done(renderCategories)
+
 }
-
-
 
 function makeButtons(answer, value)
 {
@@ -165,61 +203,83 @@ function makeButtons(answer, value)
 
 function displayNextAnsweredPage(correct, questionObject)
 {
-    $(".main-container").empty();
+    $mainContainer.empty();
     if(correct === true)
     {
-        clearInterval(testI);
-        $(".main-container").append($("<h1>").text("Good job! You are correct!"));
-        //dispaly correct answer
-        //display score
-        //button for next question
+        clearInterval(intervalId);
+        $mainContainer.append($("<h1>").text("Good job! You are correct!"));
     }
     else
     {
-        clearInterval(testI);
-        $(".main-container").append($("<h1>").text("Better Luck next time!"));        
-        //dispaly correct answer
-        //display score
-        //button for next question
-    }
-    $(".main-container").append($("<h1>").text("Correct Answer: " + questionObject[currentQuestion].correct));
+        clearInterval(intervalId);
+        $mainContainer.append($("<h1>").text("Better Luck next time!"));        
 
-    $(".main-container").append($("<h1>").text("Correct Answers :" + correctAnswers));
-    $(".main-container").append($("<h1>").text("Wrong Answers : " + wrongAnswers));
-    $(".main-container").append($("<h1>").text("Unanswered Answers : " + unanswered));
+    }
+
+    $mainContainer.append($("<h1>").text("Correct Answer: " + questionObject[currentQuestion].correct));
+
+
+
+    if(Object.keys(questionObject).length - 1 === currentQuestion)
+    {
+        //End Game
+
+        $mainContainer.append($("<h1>").text("Trivia Quiz Finished!"));
+
+        $mainContainer.append($("<h1>").text("Correct Answers :" + correctAnswers));
+        $mainContainer.append($("<h1>").text("Wrong Answers : " + wrongAnswers));
+        $mainContainer.append($("<h1>").text("Unanswered Answers : " + unanswered));
+
+        $mainContainer.append($("<button>").text("RESET").on("click", function(){
+
+            startScreen();
+        }))
+
+
+    }
+    else
+    {
+
+        //Next Question
+        $mainContainer.append($("<h1>").text("Correct Answers :" + correctAnswers));
+        $mainContainer.append($("<h1>").text("Wrong Answers : " + wrongAnswers));
+        $mainContainer.append($("<h1>").text("Unanswered Answers : " + unanswered));
+
+        $mainContainer.append($("<button>").text("Next question").on("click", function(){
+            currentQuestion++;
+            displayNextQuestion(questionObject);
+        }))
+    }
     
-    $(".main-container").append($("<button>").text("Next question").on("click", function(){
-        currentQuestion++;
-        displayNextQuestion(questionObject);
-    }))
+
 
 }
 
 function displayNextQuestion(questionObject)
 {
     count = 5;
-    if(testI)
+    if(intervalId)
     {
         //reclear 
-        clearInterval(testI);
+        clearInterval(intervalId);
     }
-    testI = setInterval(test, 1000, questionObject);
+    intervalId = setInterval(countDown, 1000, questionObject);
 
-    $(".main-container").empty();
+    $mainContainer.empty();
     
-    $(".main-container").append($("<h1>").html(questionObject[currentQuestion].question))
-    $(".main-container").append($("<h1>").addClass("timer").text("5"));
+    $mainContainer.append($("<h1>").html(questionObject[currentQuestion].question))
+    $mainContainer.append($("<h1>").addClass("timer").text("5"));
 
     for(let i = 0; i < questionObject[currentQuestion].answers.length; i++)
     {
-        $(".main-container").append(questionObject[currentQuestion].answers[i]);
+        $mainContainer.append(questionObject[currentQuestion].answers[i]);
     }
 
 
 
-    $(".main-container").append($("<h1>").text("Correct Answers :" + correctAnswers));
-    $(".main-container").append($("<h1>").text("Wrong Answers : " + wrongAnswers));
-    $(".main-container").append($("<h1>").text("Unanswered Answers : " + unanswered));
+    $mainContainer.append($("<h1>").text("Correct Answers :" + correctAnswers));
+    $mainContainer.append($("<h1>").text("Wrong Answers : " + wrongAnswers));
+    $mainContainer.append($("<h1>").text("Unanswered Answers : " + unanswered));
 
 
     $("button").on("click", function()
@@ -235,11 +295,6 @@ function displayNextQuestion(questionObject)
             displayNextAnsweredPage(false, questionObject);
         }
 
-
-        
-
-        console.log(this.value);
-
     })
 }
 
@@ -252,25 +307,9 @@ function startTrivia(response)
     questionObject = createQuestionObject(response.results);
 
     displayNextQuestion(questionObject);
-
-
-
-    //---next make buttons with answers
-    //---then push them to a page
-    //---make onclick events for said buttons
-    //--Set timer
-    //--display question
-    //--countdown timer until button is pressed
-    //--stop timer
-    //////////////////dispaly right/wrong page
-    //--increment correct/inccorect/unanswered counters
-    //--reset timer
-    /////////////////start over
-
-
 }
 
-function test(questionObject)
+function countDown(questionObject)
 {
     count--;
     $(".timer").text(count);
@@ -279,7 +318,7 @@ function test(questionObject)
         unanswered++;
         displayNextAnsweredPage(false, questionObject);
     }
-    console.log(count);
+
 }
 
 function createQuestionObject(questions)
@@ -332,4 +371,26 @@ function createQuestionObject(questions)
     }
 
     return questionObject;
+}
+
+function startScreen()
+{
+    $mainContainer.html(startPageHtml);
+
+    currentQuestion = 0;
+    correctAnswers = 0;
+    wrongAnswers = 0;
+    unanswered = 0;
+    
+    $categorySelect =  $("#category-select");
+    $slideText = $("#slide-value");
+    $questionRange = $("#question-range");
+
+    grabInformationForScreenRender();
+    $questionRange.hide();
+    $slideText.hide();
+    
+    $questionRange.on("input", function(){
+        $slideText.text(this.value);
+    })
 }
