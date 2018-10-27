@@ -3,6 +3,9 @@ body, html {
     width: 100vw;
     background-image: url("/assets/images/snow.png");
     overflow: hidden;
+    font-family: 'KoHo', sans-serif;
+
+
 }
 
 h1 {
@@ -43,7 +46,7 @@ h1 {
     margin: 0 auto;
 }
 
-.answer-button {
+button {
     margin: 1em auto;
     width: 65%;
     height: 50px;

@@ -91,72 +91,63 @@ function addSliderListeners()
 function renderSlider(response)
 {
     let difficulty = $('input[type=radio][name=difficulty]:checked').val();
+
     if(difficulty === "easy")
     {
         if(response.category_question_count.total_easy_question_count > 50)
         {
-            $questionRange.attr("max", 50);
-            $slideText.text("5");
-            $questionRange.val("5");
-            $questionRange.off().on("input", function(){
-                $slideText.text(this.value);
-            })
+            slideValues(50);
         }
         else
         {
-            $questionRange.attr("max", response.category_question_count.total_easy_question_count);
-            $slideText.text("5");
-            $questionRange.val("5");
-            $questionRange.off().on("input", function(){
-                $slideText.text(this.value);
-            })
+            slideValues(response.category_question_count.total_easy_question_count);
         }
     }
     else if(difficulty === "medium")
     {
         if(response.category_question_count.total_medium_question_count > 50)
         {
-            $questionRange.attr("max", 50);
-            $slideText.text("5");
-            $questionRange.val("5");
-            $questionRange.off().on("input", function(){
-                $slideText.text(this.value);
-            })
+            slideValues(50);
+
         }
         else
         {
-            $questionRange.attr("max", response.category_question_count.total_medium_question_count);
-            $slideText.text("5");
-            $questionRange.val("5");
-            $questionRange.off().on("input", function(){
-                $slideText.text(this.value);
-            })
+            slideValues(response.category_question_count.total_medium_question_count);
+
         }
     }
     else if(difficulty === "hard")
     {
         if(response.category_question_count.total_hard_question_count > 50)
         {
-            $questionRange.attr("max", 50);
-            $slideText.text("5");
-            $questionRange.val("5");
-            $questionRange.off().on("input", function(){
-                $slideText.text(this.value);
-            })
+            slideValues(50);
         }
         else
         {
-            $questionRange.attr("max", response.category_question_count.total_hard_question_count);
-            $slideText.text("5");
-            $questionRange.val("5");
-            $questionRange.off().on("input", function(){
-                $slideText.text(this.value);
-            })
+            slideValues(response.category_question_count.total_hard_question_count);
         }
     }
     
     $questionRange.show();
     $slideText.show();
+
+    startGameButtonEvent();
+
+}
+
+function slideValues(value)
+{
+    $questionRange.attr("max", value);
+    $slideText.text("5");
+    $questionRange.val("5");
+    //event for slide text
+    $questionRange.off().on("input", function(){
+        $slideText.text(this.value);
+    })
+}
+
+function startGameButtonEvent()
+{
     $("#start-game-button").off().on("click", function(){
         let amount = $questionRange.val();
         let category = $categorySelect.val();
@@ -165,8 +156,6 @@ function renderSlider(response)
         doAjax(createURL(amount, category, difficulty));
     })
 }
-
-
 
 function createURL(amount, category, difficulty)
 {
@@ -196,7 +185,7 @@ function grabInformationForScreenRender()
 
 function makeButtons(answer, value)
 {
-    $answerButton = $("<button>").text(answer).val(value).addClass("answer-button");
+    $answerButton = $("<button>").text(answer).val(value);
     
     return $answerButton;
 }
@@ -225,31 +214,25 @@ function displayNextAnsweredPage(correct, questionObject)
         //End Game
 
         $mainContainer.append($("<h1>").text("Trivia Quiz Finished!"));
-
-        $mainContainer.append($("<h1>").text("Correct Answers :" + correctAnswers));
-        $mainContainer.append($("<h1>").text("Wrong Answers : " + wrongAnswers));
-        $mainContainer.append($("<h1>").text("Unanswered Answers : " + unanswered));
-
         $mainContainer.append($("<button>").text("RESET").on("click", function(){
-
             startScreen();
         }))
-
 
     }
     else
     {
 
         //Next Question
-        $mainContainer.append($("<h1>").text("Correct Answers :" + correctAnswers));
-        $mainContainer.append($("<h1>").text("Wrong Answers : " + wrongAnswers));
-        $mainContainer.append($("<h1>").text("Unanswered Answers : " + unanswered));
 
         $mainContainer.append($("<button>").text("Next question").on("click", function(){
             currentQuestion++;
             displayNextQuestion(questionObject);
         }))
     }
+
+    $mainContainer.append($("<h1>").text("Correct Answers :" + correctAnswers));
+    $mainContainer.append($("<h1>").text("Wrong Answers : " + wrongAnswers));
+    $mainContainer.append($("<h1>").text("Unanswered Answers : " + unanswered));
     
 
 
@@ -275,11 +258,6 @@ function displayNextQuestion(questionObject)
         $mainContainer.append(questionObject[currentQuestion].answers[i]);
     }
 
-
-
-    $mainContainer.append($("<h1>").text("Correct Answers :" + correctAnswers));
-    $mainContainer.append($("<h1>").text("Wrong Answers : " + wrongAnswers));
-    $mainContainer.append($("<h1>").text("Unanswered Answers : " + unanswered));
 
 
     $("button").on("click", function()
