@@ -240,7 +240,7 @@ function displayNextAnsweredPage(correct, questionObject)
 
 function displayNextQuestion(questionObject)
 {
-    count = 5;
+    count = 15;
     if(intervalId)
     {
         //reclear 
