@@ -251,7 +251,7 @@ function displayNextQuestion(questionObject)
     $mainContainer.empty();
     
     $mainContainer.append($("<h1>").html(questionObject[currentQuestion].question))
-    $mainContainer.append($("<h1>").addClass("timer").text("5"));
+    $mainContainer.append($("<h1>").addClass("timer").text("15"));
 
     for(let i = 0; i < questionObject[currentQuestion].answers.length; i++)
     {
